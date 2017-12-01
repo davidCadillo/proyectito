@@ -59,15 +59,29 @@ generarador.generar<-function(N = 100){
   #Definiendo la puntuación asociada a los factores
   unidos<-unite(datos,col="cantidad",3:10,sep=" ", remove = T) %>% select(cantidad)
   puntuacion<-str_count(as.vector(unidos$cantidad),"1") + as.integer(datos$sexo == "Hombre") + as.integer(datos$edad <=20 | datos$edad>=45)
-  puntuacion<-puntuacion*rep(1,10)
-  
+  puntuacion<-puntuacion*rep(1,N)
   datos$puntuacion <- puntuacion
-  #Definiendo el dataframe
+
+  return (datos)  
   
-  write.csv2(datos,file="salida/output.csv")
+}
+
+generador.guardar=function(df){
+  write.csv2(df,file="salida/output.csv")
 }
 
 
-generarador.generar(500)
+generador.tiempo=function(n,desde=1970){
+  hasta<-as.numeric(format(as.Date(Sys.Date()),"%Y")) - 1
+  df_unidos<-data.frame()
+  for(i in desde:hasta){
+    generado<-generarador.generar(n)
+    generado$anio <- i
+    df_unidos<-rbind(df_unidos,generado)   
+  }
+  return (df_unidos)
+}
 
 
+fg<-generador.tiempo(1)
+View(fg)
